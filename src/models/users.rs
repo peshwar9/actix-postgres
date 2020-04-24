@@ -1,7 +1,5 @@
-use crate::schema::employees;
-
-use diesel::prelude::*;
-use serde::{Deserialize, Serialize};
+//use crate::models::schema::employees;
+use serde::{Serialize};
 
 //#[derive(Deserialize, Serialize)]
 
