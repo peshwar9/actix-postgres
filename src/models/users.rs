@@ -28,12 +28,13 @@ pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
 
 }
 
-pub fn get_employee() -> Result<Employee,Error> {
+pub fn get_employee(user_id: i32) -> Result<Employee,Error> {
     use schema::employees::dsl::*;
     let connection = establish_connection();
 
    // let results: Vec<Employee> = vec![];
  let result = employees
+        .filter(id.eq(user_id))
         .first::<Employee>(&connection)
    //     .load::<Employee>(&connection)
         .expect("Error loading employees");

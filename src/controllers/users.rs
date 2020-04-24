@@ -3,7 +3,7 @@ use crate::models::users::{Employee,get_all_employees, get_employee};
 
 use actix_web::{HttpRequest, HttpResponse, Responder};
 use actix_web::error::Error;
-use actix_web::web::Json;
+use actix_web::web::{Json,Path};
 use crate::utility::{send_json_response};
 use serde::{Serialize};
 
@@ -56,9 +56,9 @@ pub async fn find_all() -> Result<Json<EmployeesResponse>,Error> {
 }
 
 
-pub async fn find() -> Result<Json<EmployeeResponse>,Error> {
+pub async fn find(user_id: Path<i32>) -> Result<Json<EmployeeResponse>,Error> {
   
- let result = get_employee()?;
+ let result = get_employee(*user_id)?;
  send_json_response(result.into())
   //HttpResponse::Ok().json(results).await
   }
