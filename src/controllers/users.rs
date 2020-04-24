@@ -1,12 +1,12 @@
-use crate::models::users::{Employee};
-use crate::models::schema;
-use diesel::prelude::*;
+use crate::models::users::{Employee,get_all_employees, get_employee};
+
+
 use actix_web::{HttpRequest, HttpResponse, Responder};
 use actix_web::error::Error;
 use actix_web::web::Json;
 use crate::utility::{send_json_response};
 use serde::{Serialize};
-use crate::database::{establish_connection};
+
 
 
 #[derive(Serialize)]
@@ -48,14 +48,7 @@ pub async fn welcome(request: HttpRequest) -> impl Responder {
 }
 
 pub async fn find_all() -> Result<Json<EmployeesResponse>,Error> {
-    use schema::employees::dsl::*;
-      let connection = establish_connection();
-  
-     // let results: Vec<Employee> = vec![];
-   let results = employees
-  .limit(5)
-  .load::<Employee>(&connection)
-  .expect("Error loading employees");
+    let results = get_all_employees()?;
   
   //HttpResponse::Ok().json(results).await
   send_json_response(results.into())
@@ -63,17 +56,9 @@ pub async fn find_all() -> Result<Json<EmployeesResponse>,Error> {
 }
 
 
-pub async fn find() -> Result<HttpResponse,actix_http::error::Error> {
+pub async fn find() -> Result<Json<EmployeeResponse>,Error> {
   
-      use schema::employees::dsl::*;
-      let connection = establish_connection();
-  
-     // let results: Vec<Employee> = vec![];
-   let results = employees
-  .limit(5)
-  .load::<Employee>(&connection)
-  .expect("Error loading employees");
-   
-
-  HttpResponse::Ok().json(results).await
+ let result = get_employee()?;
+ send_json_response(result.into())
+  //HttpResponse::Ok().json(results).await
   }
