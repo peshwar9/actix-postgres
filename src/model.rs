@@ -1,4 +1,4 @@
-use super::schema::employees;
+use crate::schema::employees;
 
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
