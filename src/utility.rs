@@ -1,8 +1,8 @@
+use crate::errors::ApiError;
 use actix_web::{
     body::Body,
     web::{HttpResponse, Json},
 };
-use crate::errors::ApiError;
 
 use serde::Serialize;
 

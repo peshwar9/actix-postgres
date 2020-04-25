@@ -5,10 +5,10 @@ use actix_web::{App, HttpServer};
 
 mod controllers;
 mod database;
+mod errors;
 mod models;
 mod routes;
 mod utility;
-mod errors;
 
 use routes::routes;
 

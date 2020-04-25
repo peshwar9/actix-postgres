@@ -4,11 +4,11 @@ use crate::models::users::{
 };
 
 use crate::database::Pool;
+use crate::errors::ApiError;
 use crate::utility::{respond_ok, send_json_response};
 use actix_web::web::{Json, Path};
 use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use crate::errors::ApiError;
 
 #[derive(Serialize, Deserialize)]
 pub struct CreateEmployeeRequest {
@@ -99,7 +99,6 @@ pub async fn update_employee(
 pub async fn delete(db: web::Data<Pool>, user_id: Path<i32>) -> Result<HttpResponse, ApiError> {
     delete_employee(db, *user_id)?;
     respond_ok()
-
 }
 
 pub async fn find_all(db: web::Data<Pool>) -> Result<Json<EmployeesResponse>, ApiError> {

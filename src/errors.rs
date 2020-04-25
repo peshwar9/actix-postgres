@@ -1,6 +1,6 @@
-use actix_web::{error::ResponseError, HttpResponse,http::StatusCode};
-use serde::{Serialize, Deserialize};
+use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
 use derive_more::Display;
+use serde::{Deserialize, Serialize};
 
 use diesel::{
     r2d2::PoolError,
@@ -77,6 +77,3 @@ impl From<PoolError> for ApiError {
         ApiError::PoolError(error.to_string())
     }
 }
-
-
-

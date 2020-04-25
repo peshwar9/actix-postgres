@@ -1,10 +1,10 @@
 use crate::database::Pool;
+use crate::errors::ApiError;
 use crate::models::schema;
 use crate::models::schema::employees;
 use actix_web::web;
 use diesel::prelude::*;
 use schema::employees::dsl::*;
-use crate::errors::ApiError;
 
 #[derive(Queryable)]
 pub struct Employee {
@@ -35,7 +35,10 @@ pub struct UpdateEmployee {
     pub department: String,
 }
 
-pub fn create_new_employee(pool: web::Data<Pool>, new_emp: NewEmployee) -> Result<Employee, ApiError> {
+pub fn create_new_employee(
+    pool: web::Data<Pool>,
+    new_emp: NewEmployee,
+) -> Result<Employee, ApiError> {
     let connection = pool.get().unwrap();
     let not_found = format!("Unable to create new employee");
 
@@ -51,7 +54,10 @@ pub fn update_employee_details(
     exist_emp: UpdateEmployee,
 ) -> Result<Employee, ApiError> {
     let connection = pool.get().unwrap();
-    let not_found = format!("There is no such employee {} in your company",&exist_emp.id);
+    let not_found = format!(
+        "There is no such employee {} in your company",
+        &exist_emp.id
+    );
     let updated_employee: Employee = diesel::update(employees)
         .filter(id.eq(exist_emp.id.clone()))
         .set(&exist_emp)
@@ -84,7 +90,10 @@ pub fn get_employee(pool: web::Data<Pool>, user_id: i32) -> Result<Employee, Api
 
 pub fn delete_employee(pool: web::Data<Pool>, user_id: i32) -> Result<(), ApiError> {
     let connection = pool.get().unwrap();
-    let not_found = format!("Employee {} is not found, unable to delete what I cannot find", user_id);
+    let not_found = format!(
+        "Employee {} is not found, unable to delete what I cannot find",
+        user_id
+    );
     diesel::delete(employees)
         .filter(id.eq(user_id))
         .execute(&connection)
