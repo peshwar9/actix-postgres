@@ -1,9 +1,9 @@
-use crate::models::users::{Employee,NewEmployee, UpdateEmployee, get_all_employees, get_employee, create_new_employee, update_employee_details};
+use crate::models::users::{Employee,NewEmployee, UpdateEmployee, get_all_employees, get_employee, create_new_employee, update_employee_details, delete_employee};
 
-use actix_web::{HttpRequest, Responder};
+use actix_web::{HttpRequest, HttpResponse, Responder};
 use actix_web::error::Error;
 use actix_web::web::{Json,Path};
-use crate::utility::{send_json_response};
+use crate::utility::{send_json_response, respond_ok};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize,Deserialize)]
@@ -92,6 +92,11 @@ let updated_employee: Employee = update_employee_details(exist_emp)?;
 
 send_json_response(updated_employee.into())
 
+}
+
+pub async fn delete(user_id: Path<i32>) -> Result<HttpResponse,Error> {
+    delete_employee(*user_id)?;
+    respond_ok()
 }
 
 pub async fn find_all() -> Result<Json<EmployeesResponse>,Error> {

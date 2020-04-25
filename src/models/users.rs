@@ -3,6 +3,7 @@ use crate::database::{establish_connection};
 use actix_web::error::Error;
 use crate::models::schema;
 use diesel::prelude::*;
+use schema::employees::dsl::*;
 
 #[derive(Queryable)]
 pub struct Employee {
@@ -46,7 +47,7 @@ pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
 }
 
 pub fn update_employee_details(exist_emp: UpdateEmployee) -> Result<Employee, Error> {
-    use crate::models::schema::employees::dsl::{id,employees};
+
     let connection = establish_connection();
     let updated_employee: Employee = diesel::update(employees)
                                         .filter(id.eq(exist_emp.id.clone()))
@@ -57,11 +58,10 @@ pub fn update_employee_details(exist_emp: UpdateEmployee) -> Result<Employee, Er
 }
 
 pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
-    use schema::employees::dsl::*;
+
     let connection = establish_connection();
 
-   // let results: Vec<Employee> = vec![];
- let results = employees
+    let results = employees
         .limit(10)
         .load::<Employee>(&connection)
         .expect("Error loading employees");
@@ -70,15 +70,24 @@ pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
 }
 
 pub fn get_employee(user_id: i32) -> Result<Employee,Error> {
-    use schema::employees::dsl::*;
+    
     let connection = establish_connection();
 
-   // let results: Vec<Employee> = vec![];
- let result = employees
+   
+    let result = employees
         .filter(id.eq(user_id))
         .first::<Employee>(&connection)
-   //     .load::<Employee>(&connection)
         .expect("Error loading employees");
     Ok(result)
 
+}
+
+pub fn delete_employee(user_id: i32) -> Result<(),Error> {
+    let connection = establish_connection();
+    diesel::delete(employees)
+        .filter(id.eq(user_id))
+        .execute(&connection)
+        .expect("Error in deleting employee");
+    
+Ok(())
 }
