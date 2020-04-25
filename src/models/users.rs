@@ -1,5 +1,5 @@
 use crate::models::schema::employees;
-use serde::{Serialize};
+use serde::{Serialize,Deserialize};
 use crate::database::{establish_connection};
 use actix_web::error::Error;
 use crate::models::schema;
@@ -25,6 +25,15 @@ pub struct NewEmployee {
     pub age: i32,
 }
 
+#[derive(AsChangeset, Serialize, Deserialize)]
+#[table_name = "employees"]
+pub struct UpdateEmployee {
+    pub id: i32,
+    pub firstname: String,
+    pub lastname: String,
+    pub department: String,
+}
+
 pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
    
 
@@ -37,6 +46,16 @@ pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
     Ok(new_employee)
 }
 
+pub fn update_employee_details(exist_emp: UpdateEmployee) -> Result<Employee, Error> {
+    use crate::models::schema::employees::dsl::{id,employees};
+    let connection = establish_connection();
+    let updated_employee: Employee = diesel::update(employees)
+                                        .filter(id.eq(exist_emp.id.clone()))
+                                        .set(&exist_emp)
+                                        .get_result::<Employee>(&connection)
+                                        .expect(&format!("Unable to find post id {}",&exist_emp.id));
+    Ok(updated_employee)
+}
 
 pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
     use schema::employees::dsl::*;

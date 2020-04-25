@@ -1,4 +1,4 @@
-use crate::models::users::{Employee,NewEmployee, get_all_employees, get_employee, create_new_employee};
+use crate::models::users::{Employee,NewEmployee, UpdateEmployee, get_all_employees, get_employee, create_new_employee, update_employee_details};
 
 use actix_web::{HttpRequest, Responder};
 use actix_web::error::Error;
@@ -15,6 +15,14 @@ pub struct CreateEmployeeRequest {
     pub age: i32,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct UpdateEmployeeRequest {
+    pub id: i32,    
+    pub first_name: String,
+    pub last_name: String,    
+    pub department: String,
+}
+
 #[derive(Serialize)]
 pub struct EmployeeResponse {
     pub id: i32,
@@ -24,6 +32,8 @@ pub struct EmployeeResponse {
  //   pub salary: i32,
  //   pub age: i32,
 }
+
+
 
 #[derive(Serialize)]
 pub struct EmployeesResponse(pub Vec<EmployeeResponse>);
@@ -68,6 +78,20 @@ pub async fn create_employee(params: Json<CreateEmployeeRequest>) -> Result<Json
    let new_employee: Employee = create_new_employee(new_emp)?;
    
     send_json_response(new_employee.into())
+}
+
+pub async fn update_employee(params: Json<UpdateEmployeeRequest>) -> Result<Json<EmployeeResponse>, Error> {
+
+    let exist_emp = UpdateEmployee {
+        id : params.id,
+        firstname: params.first_name.to_string(),
+        lastname: params.last_name.to_string(),
+        department: params.department.to_string(),
+    };
+let updated_employee: Employee = update_employee_details(exist_emp)?;
+
+send_json_response(updated_employee.into())
+
 }
 
 pub async fn find_all() -> Result<Json<EmployeesResponse>,Error> {
