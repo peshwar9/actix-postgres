@@ -6,8 +6,9 @@ use crate::models::users::{
 use crate::utility::{respond_ok, send_json_response};
 use actix_web::error::Error;
 use actix_web::web::{Json, Path};
-use actix_web::{HttpRequest, HttpResponse, Responder};
+use actix_web::{HttpRequest, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
+use crate::{Pool};
 
 #[derive(Serialize, Deserialize)]
 pub struct CreateEmployeeRequest {
@@ -105,8 +106,8 @@ pub async fn find_all() -> Result<Json<EmployeesResponse>, Error> {
     send_json_response(results.into())
 }
 
-pub async fn find(user_id: Path<i32>) -> Result<Json<EmployeeResponse>, Error> {
-    let result = get_employee(*user_id)?;
+pub async fn find(db: web::Data<Pool>, user_id: Path<i32>) -> Result<Json<EmployeeResponse>, Error> {
+    let result = get_employee(db, *user_id)?;
     send_json_response(result.into())
     //HttpResponse::Ok().json(results).await
 }

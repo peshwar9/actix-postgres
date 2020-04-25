@@ -1,9 +1,10 @@
 use crate::database::establish_connection;
 use crate::models::schema;
 use crate::models::schema::employees;
-use actix_web::error::Error;
+use actix_web::{web,error::Error};
 use diesel::prelude::*;
 use schema::employees::dsl::*;
+use crate::{Pool};
 
 #[derive(Queryable)]
 pub struct Employee {
@@ -63,9 +64,9 @@ pub fn get_all_employees() -> Result<Vec<Employee>, Error> {
     Ok(results)
 }
 
-pub fn get_employee(user_id: i32) -> Result<Employee, Error> {
-    let connection = establish_connection();
-
+pub fn get_employee(pool: web::Data<Pool>, user_id: i32) -> Result<Employee, Error> {
+  //  let connection = establish_connection();
+    let connection = pool.get().unwrap();
     let result = employees
         .filter(id.eq(user_id))
         .first::<Employee>(&connection)
