@@ -5,10 +5,10 @@ use crate::models::users::{
 
 use crate::database::Pool;
 use crate::utility::{respond_ok, send_json_response};
-use actix_web::error::Error;
 use actix_web::web::{Json, Path};
 use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
+use crate::errors::ApiError;
 
 #[derive(Serialize, Deserialize)]
 pub struct CreateEmployeeRequest {
@@ -67,7 +67,7 @@ pub async fn welcome(request: HttpRequest) -> impl Responder {
 pub async fn create_employee(
     db: web::Data<Pool>,
     params: Json<CreateEmployeeRequest>,
-) -> Result<Json<EmployeeResponse>, Error> {
+) -> Result<Json<EmployeeResponse>, ApiError> {
     // let emp = serde_json::from_str(&params);
     let new_emp = NewEmployee {
         firstname: params.first_name.to_string(),
@@ -84,7 +84,7 @@ pub async fn create_employee(
 pub async fn update_employee(
     db: web::Data<Pool>,
     params: Json<UpdateEmployeeRequest>,
-) -> Result<Json<EmployeeResponse>, Error> {
+) -> Result<Json<EmployeeResponse>, ApiError> {
     let exist_emp = UpdateEmployee {
         id: params.id,
         firstname: params.first_name.to_string(),
@@ -96,12 +96,13 @@ pub async fn update_employee(
     send_json_response(updated_employee.into())
 }
 
-pub async fn delete(db: web::Data<Pool>, user_id: Path<i32>) -> Result<HttpResponse, Error> {
+pub async fn delete(db: web::Data<Pool>, user_id: Path<i32>) -> Result<HttpResponse, ApiError> {
     delete_employee(db, *user_id)?;
-    respond_ok()
+    respond_ok("ok yaar")
+
 }
 
-pub async fn find_all(db: web::Data<Pool>) -> Result<Json<EmployeesResponse>, Error> {
+pub async fn find_all(db: web::Data<Pool>) -> Result<Json<EmployeesResponse>, ApiError> {
     let results = get_all_employees(db)?;
 
     //HttpResponse::Ok().json(results).await
@@ -111,7 +112,7 @@ pub async fn find_all(db: web::Data<Pool>) -> Result<Json<EmployeesResponse>, Er
 pub async fn find(
     db: web::Data<Pool>,
     user_id: Path<i32>,
-) -> Result<Json<EmployeeResponse>, Error> {
+) -> Result<Json<EmployeeResponse>, ApiError> {
     let result = get_employee(db, *user_id)?;
     send_json_response(result.into())
     //HttpResponse::Ok().json(results).await

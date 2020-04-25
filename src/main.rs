@@ -8,6 +8,8 @@ mod database;
 mod models;
 mod routes;
 mod utility;
+mod errors;
+
 use routes::routes;
 
 use database::establish_connection;

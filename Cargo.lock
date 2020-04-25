@@ -97,6 +97,7 @@ version = "0.1.0"
 dependencies = [
  "actix-rt",
  "actix-web",
+ "derive_more",
  "diesel",
  "dotenv",
  "futures",
