@@ -1,10 +1,9 @@
-use crate::database::establish_connection;
+use crate::database::Pool;
 use crate::models::schema;
 use crate::models::schema::employees;
-use actix_web::{web,error::Error};
+use actix_web::{error::Error, web};
 use diesel::prelude::*;
 use schema::employees::dsl::*;
-use crate::{Pool};
 
 #[derive(Queryable)]
 pub struct Employee {
@@ -35,8 +34,8 @@ pub struct UpdateEmployee {
     pub department: String,
 }
 
-pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
-    let connection = establish_connection();
+pub fn create_new_employee(pool: web::Data<Pool>, new_emp: NewEmployee) -> Result<Employee, Error> {
+    let connection = pool.get().unwrap();
     let new_employee: Employee = diesel::insert_into(employees::table)
         .values(&new_emp)
         .get_result(&connection)
@@ -44,8 +43,11 @@ pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
     Ok(new_employee)
 }
 
-pub fn update_employee_details(exist_emp: UpdateEmployee) -> Result<Employee, Error> {
-    let connection = establish_connection();
+pub fn update_employee_details(
+    pool: web::Data<Pool>,
+    exist_emp: UpdateEmployee,
+) -> Result<Employee, Error> {
+    let connection = pool.get().unwrap();
     let updated_employee: Employee = diesel::update(employees)
         .filter(id.eq(exist_emp.id.clone()))
         .set(&exist_emp)
@@ -54,8 +56,8 @@ pub fn update_employee_details(exist_emp: UpdateEmployee) -> Result<Employee, Er
     Ok(updated_employee)
 }
 
-pub fn get_all_employees() -> Result<Vec<Employee>, Error> {
-    let connection = establish_connection();
+pub fn get_all_employees(pool: web::Data<Pool>) -> Result<Vec<Employee>, Error> {
+    let connection = pool.get().unwrap();
 
     let results = employees
         .limit(10)
@@ -65,7 +67,7 @@ pub fn get_all_employees() -> Result<Vec<Employee>, Error> {
 }
 
 pub fn get_employee(pool: web::Data<Pool>, user_id: i32) -> Result<Employee, Error> {
-  //  let connection = establish_connection();
+    //  let connection = establish_connection();
     let connection = pool.get().unwrap();
     let result = employees
         .filter(id.eq(user_id))
@@ -74,8 +76,8 @@ pub fn get_employee(pool: web::Data<Pool>, user_id: i32) -> Result<Employee, Err
     Ok(result)
 }
 
-pub fn delete_employee(user_id: i32) -> Result<(), Error> {
-    let connection = establish_connection();
+pub fn delete_employee(pool: web::Data<Pool>, user_id: i32) -> Result<(), Error> {
+    let connection = pool.get().unwrap();
     diesel::delete(employees)
         .filter(id.eq(user_id))
         .execute(&connection)

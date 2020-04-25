@@ -3,12 +3,12 @@ use crate::models::users::{
     Employee, NewEmployee, UpdateEmployee,
 };
 
+use crate::database::Pool;
 use crate::utility::{respond_ok, send_json_response};
 use actix_web::error::Error;
 use actix_web::web::{Json, Path};
-use actix_web::{HttpRequest, web, HttpResponse, Responder};
+use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use crate::{Pool};
 
 #[derive(Serialize, Deserialize)]
 pub struct CreateEmployeeRequest {
@@ -65,6 +65,7 @@ pub async fn welcome(request: HttpRequest) -> impl Responder {
 // Create new employee
 
 pub async fn create_employee(
+    db: web::Data<Pool>,
     params: Json<CreateEmployeeRequest>,
 ) -> Result<Json<EmployeeResponse>, Error> {
     // let emp = serde_json::from_str(&params);
@@ -75,12 +76,13 @@ pub async fn create_employee(
         salary: params.salary,
         age: params.age,
     };
-    let new_employee: Employee = create_new_employee(new_emp)?;
+    let new_employee: Employee = create_new_employee(db, new_emp)?;
 
     send_json_response(new_employee.into())
 }
 
 pub async fn update_employee(
+    db: web::Data<Pool>,
     params: Json<UpdateEmployeeRequest>,
 ) -> Result<Json<EmployeeResponse>, Error> {
     let exist_emp = UpdateEmployee {
@@ -89,24 +91,27 @@ pub async fn update_employee(
         lastname: params.last_name.to_string(),
         department: params.department.to_string(),
     };
-    let updated_employee: Employee = update_employee_details(exist_emp)?;
+    let updated_employee: Employee = update_employee_details(db, exist_emp)?;
 
     send_json_response(updated_employee.into())
 }
 
-pub async fn delete(user_id: Path<i32>) -> Result<HttpResponse, Error> {
-    delete_employee(*user_id)?;
+pub async fn delete(db: web::Data<Pool>, user_id: Path<i32>) -> Result<HttpResponse, Error> {
+    delete_employee(db, *user_id)?;
     respond_ok()
 }
 
-pub async fn find_all() -> Result<Json<EmployeesResponse>, Error> {
-    let results = get_all_employees()?;
+pub async fn find_all(db: web::Data<Pool>) -> Result<Json<EmployeesResponse>, Error> {
+    let results = get_all_employees(db)?;
 
     //HttpResponse::Ok().json(results).await
     send_json_response(results.into())
 }
 
-pub async fn find(db: web::Data<Pool>, user_id: Path<i32>) -> Result<Json<EmployeeResponse>, Error> {
+pub async fn find(
+    db: web::Data<Pool>,
+    user_id: Path<i32>,
+) -> Result<Json<EmployeeResponse>, Error> {
     let result = get_employee(db, *user_id)?;
     send_json_response(result.into())
     //HttpResponse::Ok().json(results).await
