@@ -1,7 +1,6 @@
-use crate::models::users::{Employee,NewEmployee, get_all_employees, get_employee};
-use crate::database::{establish_connection};
-use diesel::prelude::*;
-use actix_web::{HttpRequest, HttpResponse, Responder};
+use crate::models::users::{Employee,NewEmployee, get_all_employees, get_employee, create_new_employee};
+
+use actix_web::{HttpRequest, Responder};
 use actix_web::error::Error;
 use actix_web::web::{Json,Path};
 use crate::utility::{send_json_response};
@@ -57,7 +56,7 @@ pub async fn welcome(request: HttpRequest) -> impl Responder {
 // Create new employee
 
 pub async fn create_employee(params: Json<CreateEmployeeRequest>) -> Result<Json<EmployeeResponse>,Error> {
-    use crate::models::schema::employees;
+    
    // let emp = serde_json::from_str(&params);
    let new_emp = NewEmployee {
        firstname: params.first_name.to_string(),
@@ -66,11 +65,7 @@ pub async fn create_employee(params: Json<CreateEmployeeRequest>) -> Result<Json
        salary: params.salary,
        age: params.age,
    };
-    let connection = establish_connection();
-    let new_employee: Employee = diesel::insert_into(employees::table)
-    .values(&new_emp)
-    .get_result(&connection)
-    .expect("Error saving new post");
+   let new_employee: Employee = create_new_employee(new_emp)?;
    
     send_json_response(new_employee.into())
 }

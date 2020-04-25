@@ -1,4 +1,4 @@
-use super::schema::employees;
+use crate::models::schema::employees;
 use serde::{Serialize};
 use crate::database::{establish_connection};
 use actix_web::error::Error;
@@ -25,14 +25,17 @@ pub struct NewEmployee {
     pub age: i32,
 }
 
-/*pub fn create_new_employee(emp: NewEmployee) -> Result<Employee, Error> {
-    use schema::employees::dsl::*;
+pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
+   
+
+
     let connection = establish_connection();
-    diesel::insert_into(employees::table)
-    .values(&emp)
-    .get_result(connection)
-    .expect("Error saving new post")
-}*/
+    let new_employee: Employee = diesel::insert_into(employees::table)
+    .values(&new_emp)
+    .get_result(&connection)
+    .expect("Error saving new post");
+    Ok(new_employee)
+}
 
 
 pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
