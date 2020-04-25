@@ -98,7 +98,7 @@ pub async fn update_employee(
 
 pub async fn delete(db: web::Data<Pool>, user_id: Path<i32>) -> Result<HttpResponse, ApiError> {
     delete_employee(db, *user_id)?;
-    respond_ok("ok yaar")
+    respond_ok()
 
 }
 

@@ -13,6 +13,6 @@ where
     Ok(Json(data))
 }
 
-pub fn respond_ok(data: &'static str) -> Result<HttpResponse, ApiError> {
-    Ok(HttpResponse::Ok().body(data))
+pub fn respond_ok() -> Result<HttpResponse, ApiError> {
+    Ok(HttpResponse::Ok().body(Body::Empty))
 }
