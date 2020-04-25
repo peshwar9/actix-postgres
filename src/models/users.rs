@@ -1,11 +1,10 @@
 use crate::models::schema::employees;
-use serde::{Serialize,Deserialize};
 use crate::database::{establish_connection};
 use actix_web::error::Error;
 use crate::models::schema;
 use diesel::prelude::*;
 
-#[derive(Queryable, Serialize)]
+#[derive(Queryable)]
 pub struct Employee {
     pub id: i32,
     pub first_name: String,
@@ -25,7 +24,7 @@ pub struct NewEmployee {
     pub age: i32,
 }
 
-#[derive(AsChangeset, Serialize, Deserialize)]
+#[derive(AsChangeset)]
 #[table_name = "employees"]
 pub struct UpdateEmployee {
     pub id: i32,
@@ -63,7 +62,7 @@ pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
 
    // let results: Vec<Employee> = vec![];
  let results = employees
-        .limit(5)
+        .limit(10)
         .load::<Employee>(&connection)
         .expect("Error loading employees");
     Ok(results)
