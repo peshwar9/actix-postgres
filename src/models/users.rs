@@ -1,7 +1,7 @@
-use crate::models::schema::employees;
-use crate::database::{establish_connection};
-use actix_web::error::Error;
+use crate::database::establish_connection;
 use crate::models::schema;
+use crate::models::schema::employees;
+use actix_web::error::Error;
 use diesel::prelude::*;
 use schema::employees::dsl::*;
 
@@ -35,30 +35,25 @@ pub struct UpdateEmployee {
 }
 
 pub fn create_new_employee(new_emp: NewEmployee) -> Result<Employee, Error> {
-   
-
-
     let connection = establish_connection();
     let new_employee: Employee = diesel::insert_into(employees::table)
-    .values(&new_emp)
-    .get_result(&connection)
-    .expect("Error saving new post");
+        .values(&new_emp)
+        .get_result(&connection)
+        .expect("Error saving new post");
     Ok(new_employee)
 }
 
 pub fn update_employee_details(exist_emp: UpdateEmployee) -> Result<Employee, Error> {
-
     let connection = establish_connection();
     let updated_employee: Employee = diesel::update(employees)
-                                        .filter(id.eq(exist_emp.id.clone()))
-                                        .set(&exist_emp)
-                                        .get_result::<Employee>(&connection)
-                                        .expect(&format!("Unable to find post id {}",&exist_emp.id));
+        .filter(id.eq(exist_emp.id.clone()))
+        .set(&exist_emp)
+        .get_result::<Employee>(&connection)
+        .expect(&format!("Unable to find post id {}", &exist_emp.id));
     Ok(updated_employee)
 }
 
-pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
-
+pub fn get_all_employees() -> Result<Vec<Employee>, Error> {
     let connection = establish_connection();
 
     let results = employees
@@ -66,28 +61,24 @@ pub fn get_all_employees() -> Result<Vec<Employee>,Error> {
         .load::<Employee>(&connection)
         .expect("Error loading employees");
     Ok(results)
-
 }
 
-pub fn get_employee(user_id: i32) -> Result<Employee,Error> {
-    
+pub fn get_employee(user_id: i32) -> Result<Employee, Error> {
     let connection = establish_connection();
 
-   
     let result = employees
         .filter(id.eq(user_id))
         .first::<Employee>(&connection)
         .expect("Error loading employees");
     Ok(result)
-
 }
 
-pub fn delete_employee(user_id: i32) -> Result<(),Error> {
+pub fn delete_employee(user_id: i32) -> Result<(), Error> {
     let connection = establish_connection();
     diesel::delete(employees)
         .filter(id.eq(user_id))
         .execute(&connection)
         .expect("Error in deleting employee");
-    
-Ok(())
+
+    Ok(())
 }

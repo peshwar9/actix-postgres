@@ -92,6 +92,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "actix-pogtgres"
+version = "0.1.0"
+dependencies = [
+ "actix-http",
+ "actix-rt",
+ "actix-web",
+ "diesel",
+ "dotenv",
+ "futures",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "actix-router"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -504,20 +518,6 @@ name = "either"
 version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb1f6b1ce1c140482ea30ddd3335fc0024ac7ee112895426e0a629a6c20adfe3"
-
-[[package]]
-name = "emply"
-version = "0.1.0"
-dependencies = [
- "actix-http",
- "actix-rt",
- "actix-web",
- "diesel",
- "dotenv",
- "futures",
- "serde",
- "serde_json",
-]
 
 [[package]]
 name = "encoding_rs"

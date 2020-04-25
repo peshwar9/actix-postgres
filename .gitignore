@@ -1,3 +1,7 @@
 /target
 # Don't commit .env file
 .env 
+
+# json files used for testing
+
+*.json

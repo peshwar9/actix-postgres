@@ -8,4 +8,3 @@ table! {
         age -> Int4,
     }
 }
-
