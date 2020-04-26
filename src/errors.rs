@@ -9,10 +9,12 @@ use diesel::{
 
 #[derive(Display, Debug)]
 pub enum ApiError {
-    InternalApiError(String),
+    InternalServerError(String),
     BadRequest(String),
     NotFound(String),
     PoolError(String),
+    CannotDecodeJwtToken(String),
+    CannotEncodeJwtToken(String),
 }
 /// User-friendly error messages
 #[derive(Debug, Deserialize, Serialize)]
@@ -23,7 +25,7 @@ pub struct ErrorResponse {
 impl ResponseError for ApiError {
     fn error_response(&self) -> HttpResponse {
         match self {
-            ApiError::InternalApiError(msg) => {
+            ApiError::InternalServerError(msg) => {
                 HttpResponse::InternalServerError().json::<ErrorResponse>(msg.into())
             }
             ApiError::BadRequest(error) => {
@@ -64,9 +66,9 @@ impl From<DBError> for ApiError {
                     let message = info.details().unwrap_or_else(|| info.message()).to_string();
                     return ApiError::BadRequest(message);
                 }
-                ApiError::InternalApiError("Unknown database error".into())
+                ApiError::InternalServerError("Unknown database error".into())
             }
-            _ => ApiError::InternalApiError("Unknown database error".into()),
+            _ => ApiError::InternalServerError("Unknown database error".into()),
         }
     }
 }
