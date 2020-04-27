@@ -18,3 +18,14 @@ let health = HealthResponse {
 };
 send_json_response(health)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[actix_rt::test]
+    async fn test_get_health() {
+        let response = get_health().await.unwrap();
+        assert_eq!(response.into_inner().status, "Ok".to_string());
+    }
+}
