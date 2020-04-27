@@ -3,6 +3,7 @@ use actix_web::web::{Json};
 use crate::utility::{send_json_response};
 use std::env;
 use serde::{Serialize, Deserialize};
+//use log;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HealthResponse {
@@ -16,6 +17,7 @@ let health = HealthResponse {
     version: env!("CARGO_PKG_VERSION").into(),
 
 };
+
 send_json_response(health)
 }
 
