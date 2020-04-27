@@ -3,12 +3,12 @@ use crate::models::users::{
     Employee, NewEmployee, UpdateEmployee,
 };
 
+use crate::auth::create_jwt;
 use crate::database::Pool;
 use crate::errors::ApiError;
 use crate::utility::{respond_ok, send_json_response};
 use actix_web::web::{Json, Path};
 use actix_web::{web, HttpRequest, HttpResponse, Responder};
-use crate::auth::{create_jwt, decode_jwt};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -68,7 +68,6 @@ pub async fn welcome(request: HttpRequest) -> impl Responder {
 pub async fn get_token(_request: HttpRequest) -> impl Responder {
     println!("going to create jwt");
     create_jwt()
-    
 }
 // Create new employee
 

@@ -1,8 +1,8 @@
+use crate::envdata::ENVDATA;
 use crate::errors::ApiError;
-use actix_web::web::{Json};
-use crate::utility::{send_json_response};
-use std::env;
-use serde::{Serialize, Deserialize};
+use crate::utility::send_json_response;
+use actix_web::web::Json;
+use serde::{Deserialize, Serialize};
 //use log;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -11,14 +11,14 @@ pub struct HealthResponse {
     pub version: String,
 }
 
-pub async fn get_health() -> Result<Json<HealthResponse>,ApiError> {
-let health = HealthResponse {
-    status: "Ok".to_string(),
-    version: env!("CARGO_PKG_VERSION").into(),
+pub async fn get_health() -> Result<Json<HealthResponse>, ApiError> {
+    let health = HealthResponse {
+        status: "Ok".to_string(),
+        //  version: env!("CARGO_PKG_VERSION").into(),
+        version: ENVDATA.cargo_pkg_version.clone(),
+    };
 
-};
-
-send_json_response(health)
+    send_json_response(health)
 }
 
 #[cfg(test)]

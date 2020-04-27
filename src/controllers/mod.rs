@@ -1,2 +1,2 @@
-pub mod users;
 pub mod health;
+pub mod users;

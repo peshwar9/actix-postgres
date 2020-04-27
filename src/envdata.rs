@@ -1,7 +1,7 @@
-use serde::{Deserialize};
 use dotenv::dotenv;
+use serde::Deserialize;
 
-#[derive(Clone, Deserialize,Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct Envdata {
     pub database_url: String,
     pub cargo_pkg_version: String,
@@ -18,6 +18,6 @@ fn get_envdata() -> Envdata {
 
     match envy::from_env::<Envdata>() {
         Ok(envdata) => envdata,
-        Err(err) => panic!("Environment variables not set properly. Aborting") 
+        Err(err) => panic!("Environment variables not set properly. Aborting. {}", err),
     }
 }
