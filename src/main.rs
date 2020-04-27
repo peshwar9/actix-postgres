@@ -40,7 +40,7 @@ async fn main() -> std::io::Result<()> {
             .data(establish_connection().clone())
             .configure(routes)
     })
-    .bind("127.0.0.1:8000")?
+    .bind(&env::var("SERVER").unwrap())?
     .run()
     .await
 }
